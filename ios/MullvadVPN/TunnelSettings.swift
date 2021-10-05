@@ -63,4 +63,10 @@ struct DNSSettings: Codable, Equatable {
 
     /// Block tracking.
     var blockTracking: Bool = false
+
+    /// Enable custom DNS.
+    var enableCustomDNS: Bool = false
+
+    /// Custom DNS domains.
+    var customDNSDomains: [AnyIPAddress] = []
 }
