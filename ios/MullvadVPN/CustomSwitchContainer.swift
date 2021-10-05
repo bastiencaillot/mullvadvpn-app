@@ -21,6 +21,13 @@ class CustomSwitchContainer: UIView {
         return shapeLayer
     }()
 
+    var controlOpacity: CGFloat = 1.0 {
+        didSet {
+            control.alpha = controlOpacity
+            borderShape.opacity = Float(controlOpacity)
+        }
+    }
+
     let control = CustomSwitch()
 
     override var intrinsicContentSize: CGSize {
