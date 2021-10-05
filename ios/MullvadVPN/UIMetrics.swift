@@ -15,6 +15,9 @@ extension UIMetrics {
     /// Common layout margins for content presentation
     static var contentLayoutMargins = UIEdgeInsets(top: 24, left: 24, bottom: 24, right: 24)
 
+    /// Common layout margins for settings cell presentation
+    static var settingsCellLayoutMargins = UIEdgeInsets(top: 16, left: 24, bottom: 16, right: 12)
+
     /// Layout margins for in-app notification banner presentation
     static var inAppBannerNotificationLayoutMargins = UIEdgeInsets(top: 16, left: 24, bottom: 16, right: 24)
 

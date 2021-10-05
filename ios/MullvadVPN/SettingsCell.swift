@@ -13,7 +13,7 @@ class SettingsCell: BasicTableViewCell {
     let titleLabel = UILabel()
     let detailTitleLabel = UILabel()
 
-    private let preferredMargins = UIEdgeInsets(top: 16, left: 24, bottom: 16, right: 12)
+    private let preferredMargins = UIMetrics.settingsCellLayoutMargins
     private var appDidBecomeActiveObserver: NSObjectProtocol?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
