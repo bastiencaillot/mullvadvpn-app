@@ -9,16 +9,11 @@
 import UIKit
 import Logging
 
-class PreferencesViewController: UITableViewController, TunnelObserver {
+class PreferencesViewController: UITableViewController, PreferencesDataSourceDelegate, TunnelObserver {
 
     private let logger = Logger(label: "PreferencesViewController")
-    private var dnsSettings: DNSSettings?
 
-    private enum CellIdentifier: String {
-        case switchCell
-    }
-
-    private let staticDataSource = PreferencesTableViewDataSource()
+    private let dataSource = PreferencesDataSource()
 
     init() {
         super.init(style: .grouped)
@@ -36,21 +31,23 @@ class PreferencesViewController: UITableViewController, TunnelObserver {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 60
         tableView.sectionHeaderHeight = UIMetrics.sectionSpacing
-        tableView.sectionFooterHeight = 0
 
-        tableView.dataSource = staticDataSource
-        tableView.delegate = staticDataSource
-
-        tableView.register(SettingsSwitchCell.self, forCellReuseIdentifier: CellIdentifier.switchCell.rawValue)
-        tableView.register(EmptyTableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: EmptyTableViewHeaderFooterView.reuseIdentifier)
+        dataSource.tableView = tableView
 
         navigationItem.title = NSLocalizedString("NAVIGATION_TITLE", tableName: "Preferences", comment: "Navigation title")
         navigationItem.largeTitleDisplayMode = .always
 
         TunnelManager.shared.addObserver(self)
-        self.dnsSettings = TunnelManager.shared.tunnelInfo?.tunnelSettings.interface.dnsSettings
 
-        setupDataSource()
+        if let dnsSettings = TunnelManager.shared.tunnelInfo?.tunnelSettings.interface.dnsSettings {
+            //viewModel = PreferencesViewModel(from: dnsSettings)
+        }
+    }
+
+    // MARK: - PreferencesDataSourceDelegate
+
+    func preferencesDataSource(_ dataSource: PreferencesDataSource, didChangeDataModel dataModel: PreferencesDataModel) {
+
     }
 
     // MARK: - TunnelObserver
@@ -64,62 +61,21 @@ class PreferencesViewController: UITableViewController, TunnelObserver {
     }
 
     func tunnelManager(_ manager: TunnelManager, didUpdateTunnelSettings tunnelInfo: TunnelInfo?) {
-        if tunnelInfo?.tunnelSettings.interface.dnsSettings != self.dnsSettings {
-            self.dnsSettings = tunnelInfo?.tunnelSettings.interface.dnsSettings
-            self.tableView.reloadData()
-        }
+        guard let dnsSettings = tunnelInfo?.tunnelSettings.interface.dnsSettings else { return }
+
+        // update data source
     }
 
     // MARK: - Private
 
-    private func setupDataSource() {
-        let blockAdvertisingRow = StaticTableViewRow(reuseIdentifier: CellIdentifier.switchCell.rawValue) { (indexPath, cell) in
-            let cell = cell as! SettingsSwitchCell
-
-            cell.titleLabel.text = NSLocalizedString("BLOCK_ADS_CELL_LABEL", tableName: "Preferences", comment: "")
-            cell.setOn(self.dnsSettings?.blockAdvertising ?? false, animated: false)
-            cell.action = { [weak self] (isOn) in
-                self?.dnsSettings?.blockAdvertising = isOn
-                self?.saveDNSSettings()
-            }
-        }
-        blockAdvertisingRow.isSelectable = false
-
-        let blockTrackingRow = StaticTableViewRow(reuseIdentifier: CellIdentifier.switchCell.rawValue) { (indexPath, cell) in
-            let cell = cell as! SettingsSwitchCell
-
-            cell.titleLabel.text = NSLocalizedString("BLOCK_TRACKERS_CELL_LABEL", tableName: "Preferences", comment: "")
-            cell.setOn(self.dnsSettings?.blockTracking ?? false, animated: false)
-            cell.action = { [weak self] (isOn) in
-                self?.dnsSettings?.blockTracking = isOn
-                self?.saveDNSSettings()
-            }
-        }
-        blockTrackingRow.isSelectable = false
-
-        let section = StaticTableViewSection()
-        section.addRows([blockAdvertisingRow, blockTrackingRow])
-        staticDataSource.addSections([section])
-    }
-
     private func saveDNSSettings() {
-        guard let dnsSettings = dnsSettings else { return }
+        let dnsSettings = dataSource.dataModel.asDNSSettings()
 
         TunnelManager.shared.setDNSSettings(dnsSettings)
             .onFailure { [weak self] error in
                 self?.logger.error(chainedError: error, message: "Failed to save DNS settings")
             }
             .observe { _ in }
-    }
-
-}
-
-class PreferencesTableViewDataSource: StaticTableViewDataSource {
-
-    // MARK: - UITableViewDelegate
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return tableView.dequeueReusableHeaderFooterView(withIdentifier: EmptyTableViewHeaderFooterView.reuseIdentifier)
     }
 
 }
