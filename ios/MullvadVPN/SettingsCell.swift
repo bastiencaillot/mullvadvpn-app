@@ -9,12 +9,21 @@
 import UIKit
 
 class SettingsCell: BasicTableViewCell {
+    static let disabledCellOpacity: CGFloat = 0.5
 
     let titleLabel = UILabel()
     let detailTitleLabel = UILabel()
 
     private let preferredMargins = UIMetrics.settingsCellLayoutMargins
     private var appDidBecomeActiveObserver: NSObjectProtocol?
+
+    var isEnabled: Bool = true {
+        didSet {
+            let opacity = isEnabled ? 1 : Self.disabledCellOpacity
+            contentView.alpha = opacity
+            isUserInteractionEnabled = isEnabled
+        }
+    }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

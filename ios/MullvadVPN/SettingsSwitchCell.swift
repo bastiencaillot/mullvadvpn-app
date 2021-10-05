@@ -34,6 +34,13 @@ class SettingsSwitchCell: SettingsCell {
         switchContainer.control.setOn(isOn, animated: animated)
     }
 
+    override var isEnabled: Bool {
+        didSet {
+            switchContainer.controlOpacity = isEnabled ? 1 : Self.disabledCellOpacity
+            switchContainer.control.isEnabled = isEnabled
+        }
+    }
+
     // MARK: - Actions
 
     @objc private func switchValueDidChange() {
