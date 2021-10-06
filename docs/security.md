@@ -100,6 +100,12 @@ forwarded. All other forward traffic is rejected.
 * The app does not look at ICMPv6 type and code headers. So all ICMPv6 is allowed between the
   specified IP networks.
 
+#### Windows deviations
+An additional subset of NDP is permitted in addition to the traffic above:
+* Outgoing to `ff02::1:ff00:0/104` and `fe80::/10`, but only ICMPv6 with type 135 and code 0 (Neighbor solicitation).
+* Outgoing to `fe80::/10`, but only ICMPv6 with type 136 and code 0 (Neighbor advertisement).
+* Incoming from `*`, but only ICMPv6 with type 136 and code 0 (Neighbor advertisement).
+
 ### Disconnected
 
 This is the default state that the `mullvad-daemon` starts in when the device boots, unless
