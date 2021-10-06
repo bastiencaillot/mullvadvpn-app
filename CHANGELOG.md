@@ -97,6 +97,8 @@ Line wrap the file at 100 chars.                                              Th
 - Prefer WireGuard if the constraints preclude OpenVPN and the tunnel protocol is "auto", instead
   of failing due to "no matching relays".
 - Retry tunnel device creation multiple times to work around issues early after boot or hibernation.
+- Fix IPv6 connections to WireGuard servers by not dropping select neighbor advertisements and
+  solicitations in WFP.
 
 #### Android
 - Fix erasing wireguard MTU value in some scenarious.
