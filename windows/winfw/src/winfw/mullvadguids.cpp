@@ -137,6 +137,7 @@ MullvadGuids::DetailedIdentityRegistry MullvadGuids::DetailedRegistry(IdentityQu
 	registry.insert(std::make_pair(WfpObjectType::Filter, Filter_Baseline_PermitNdp_Outbound_Router_Solicitation()));
 	registry.insert(std::make_pair(WfpObjectType::Filter, Filter_Baseline_PermitNdp_Inbound_Router_Advertisement()));
 	registry.insert(std::make_pair(WfpObjectType::Filter, Filter_Baseline_PermitNdp_Outbound_Neighbor_Solicitation()));
+	registry.insert(std::make_pair(WfpObjectType::Filter, Filter_Baseline_PermitNdp_Inbound_Neighbor_Solicitation()));
 	registry.insert(std::make_pair(WfpObjectType::Filter, Filter_Baseline_PermitNdp_Outbound_Neighbor_Advertisement()));
 	registry.insert(std::make_pair(WfpObjectType::Filter, Filter_Baseline_PermitNdp_Inbound_Neighbor_Advertisement()));
 	registry.insert(std::make_pair(WfpObjectType::Filter, Filter_Baseline_PermitNdp_Inbound_Redirect()));
@@ -752,6 +753,20 @@ const GUID &MullvadGuids::Filter_Baseline_PermitNdp_Outbound_Neighbor_Solicitati
 		0xf736,
 		0x4ec4,
 		{ 0x8e, 0x8f, 0xd7, 0x13, 0x17, 0xd4, 0xc2, 0xb8 }
+	};
+
+	return g;
+}
+
+//static
+const GUID &MullvadGuids::Filter_Baseline_PermitNdp_Inbound_Neighbor_Solicitation()
+{
+	static const GUID g =
+	{
+		0x0c95bb19,
+		0x40a2,
+		0x48ee,
+		{ 0xa7, 0xca, 0x5b, 0x61, 0x2c, 0xab, 0x5f, 0x9d }
 	};
 
 	return g;

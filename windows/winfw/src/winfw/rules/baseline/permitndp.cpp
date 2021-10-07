@@ -103,12 +103,7 @@ bool PermitNdp::apply(IObjectInstaller &objectInstaller)
 	filterBuilder
 		.key(MullvadGuids::Filter_Baseline_PermitNdp_Outbound_Neighbor_Solicitation())
 		.name(L"Permit outbound NDP neighbor solicitation")
-		.description(L"This filter is part of a rule that permits the most central parts of NDP")
-		.provider(MullvadGuids::Provider())
-		.layer(FWPM_LAYER_ALE_AUTH_CONNECT_V6)
-		.sublayer(MullvadGuids::SublayerBaseline())
-		.weight(wfp::FilterBuilder::WeightClass::Medium)
-		.permit();
+		.layer(FWPM_LAYER_ALE_AUTH_CONNECT_V6);
 
 	{
 		wfp::ConditionBuilder conditionBuilder(FWPM_LAYER_ALE_AUTH_CONNECT_V6);
@@ -126,18 +121,36 @@ bool PermitNdp::apply(IObjectInstaller &objectInstaller)
 	}
 
 	//
-	// #5 Permit outbound neighbor advertisement.
+	// #5 Permit inbound neighbor solicitation.
+	//
+
+	filterBuilder
+		.key(MullvadGuids::Filter_Baseline_PermitNdp_Inbound_Neighbor_Solicitation())
+		.name(L"Permit inbound NDP neighbor solicitation")
+		.layer(FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6);
+
+	{
+		wfp::ConditionBuilder conditionBuilder(FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6);
+
+		conditionBuilder.add_condition(ConditionProtocol::IcmpV6());
+		conditionBuilder.add_condition(ConditionIcmp::Type(135));
+		conditionBuilder.add_condition(ConditionIcmp::Code(0));
+		conditionBuilder.add_condition(ConditionIp::Remote(linkLocal));
+
+		if (!objectInstaller.addFilter(filterBuilder, conditionBuilder))
+		{
+			return false;
+		}
+	}
+
+	//
+	// #6 Permit outbound neighbor advertisement.
 	//
 
 	filterBuilder
 		.key(MullvadGuids::Filter_Baseline_PermitNdp_Outbound_Neighbor_Advertisement())
 		.name(L"Permit outbound NDP neighbor advertisement")
-		.description(L"This filter is part of a rule that permits the most central parts of NDP")
-		.provider(MullvadGuids::Provider())
-		.layer(FWPM_LAYER_ALE_AUTH_CONNECT_V6)
-		.sublayer(MullvadGuids::SublayerBaseline())
-		.weight(wfp::FilterBuilder::WeightClass::Medium)
-		.permit();
+		.layer(FWPM_LAYER_ALE_AUTH_CONNECT_V6);
 
 	{
 		wfp::ConditionBuilder conditionBuilder(FWPM_LAYER_ALE_AUTH_CONNECT_V6);
@@ -154,7 +167,7 @@ bool PermitNdp::apply(IObjectInstaller &objectInstaller)
 	}
 
 	//
-	// #6 Permit inbound neighbor advertisement.
+	// #7 Permit inbound neighbor advertisement.
 	//
 
 	filterBuilder
